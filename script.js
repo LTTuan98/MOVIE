@@ -483,7 +483,7 @@ function confirmOrder() {
   alert("✔️ Đã xác nhận đơn!");
 
   // 👉 Chuyển về trang bàn ăn
-  window.location.href = 'ban.html';
+  window.location.href = 'index.html';
 }
 
 

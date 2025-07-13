@@ -7,7 +7,7 @@
 </head>
 <body>
   <nav>
-    <button onclick="location.href='ban.html'">Bàn ăn</button>
+    <button onclick="location.href='index.html'">Bàn ăn</button>
     <button onclick="location.href='dat_mon.html'">Đặt món</button>
     <button onclick="location.href='thuc_don.html'">Thực đơn</button>
   </nav>
@@ -47,7 +47,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       if (!selectedTableId) {
         alert("Không xác định được bàn.");
-        location.href = "ban.html";
+        location.href = "index.html";
       } else {
         document.getElementById('selectedTableLabel').innerText = `Bàn ${selectedTableId}`;
         renderMenuForOrdering();
