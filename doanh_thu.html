@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Doanh thu</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f8f8f8;
+    }
+    h2, h3 {
+      margin-bottom: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background-color: #eee;
+    }
+    button {
+      padding: 5px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #invoiceModal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    #invoiceModal table {
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📊 Doanh thu</h2>
+  <label>Chọn ngày:
+    <input type="date" id="dateFilter" />
+  </label>
+  <button onclick="loadRevenue()">Xem</button>
+  <button onclick="exportToExcel()">📥 Xuất Excel</button>
+    <button onclick="clearAllHistory()">🗑 Xóa toàn bộ</button>
+  <h3 id="summary"></h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Số HĐ</th>
+        <th>Bàn</th>
+        <th>Thời gian</th>
+        <th>Món ăn</th>
+        <th>Tổng tiền</th>
+        <th>Xem</th>
+      </tr>
+    </thead>
+    <tbody id="revenueTable"></tbody>
+  </table>
+
+  <!-- Modal xem chi tiết -->
+  <div id="invoiceModal">
+    <div id="invoiceContent"></div>
+    <div style="text-align:right; margin-top: 10px;">
+      <button onclick="document.getElementById('invoiceModal').style.display='none'">Đóng</button>
+    </div>
+  </div>
+
+  <script>
+    function loadRevenue() {
+      const tbody = document.getElementById('revenueTable');
+      const dateInput = document.getElementById('dateFilter').value;
+      const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+
+      const rows = [];
+      let totalRevenue = 0;
+
+      history.forEach((invoice, i) => {
+        const date = new Date(invoice.time);
+        const dateStr = date.toISOString().slice(0, 10);
+        if (!dateInput || dateStr === dateInput) {
+          const timeStr = date.toLocaleTimeString('vi-VN');
+          const items = invoice.orders.map(i => `${i.name} (x${i.qty})`).join(', ');
+          rows.push(`<tr>
+            <td>${invoice.invoiceId || ""}</td>
+            <td>Bàn ${invoice.tableId}</td>
+            <td>${dateStr} ${timeStr}</td>
+            <td>${items}</td>
+            <td>${invoice.total.toLocaleString()}đ</td>
+            <td>
+                <button onclick="viewInvoice(${i})">Xem</button>
+                <button onclick="deleteInvoice(${i})">Xóa</button>
+                </td>
+          </tr>`);
+          totalRevenue += invoice.total;
+        }
+      });
+
+      tbody.innerHTML = rows.join('');
+      document.getElementById('summary').innerText = `🔢 Tổng doanh thu: ${totalRevenue.toLocaleString()}đ`;
+    }
+
+    function viewInvoice(index) {
+    const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+    const invoice = history[index];
+    if (!invoice) return;
+
+    const date = new Date(invoice.time);
+    const dateStr = date.toLocaleDateString('vi-VN');
+    const timeStr = date.toLocaleTimeString('vi-VN');
+    const invoiceId = String(new Date(invoice.time).getTime()).slice(-6);
+
+    let html = `
+        <div style="font-family: monospace; font-size:14px;">
+        <center>
+            <h3 style="margin:5px 0;">NHÀ HÀNG HẢI SẢN 007</h3>
+            <div>CS2</div>
+            <div>ĐC: BÃI TẮM TT LỘC HÀ - HÀ TĨNH</div>
+            <div>ĐT: 0974.726.447</div>
+            <hr>
+            <h3 style="margin:5px 0;">HÓA ĐƠN BÁN HÀNG</h3>
+            <div>BÀN ${invoice.tableId.toString().padStart(2, '0')}</div>
+        </center>
+        <div style="margin-top:10px;">Ngày: ${dateStr} &nbsp;&nbsp;&nbsp; Số: ${invoiceId}</div>
+        <div>Thu ngân: Administrator &nbsp; In lúc: ${timeStr}</div>
+        <div>Giờ vào: ${timeStr} &nbsp;&nbsp;&nbsp; Giờ ra: ${timeStr}</div>
+        <hr>
+        <table style="width: 100%; font-size: 13px;">
+            <thead>
+            <tr>
+                <th style="text-align:left;">Mặt hàng</th>
+                <th style="text-align:center;">SL</th>
+                <th style="text-align:center;">ĐVT</th>
+                <th style="text-align:right;">T.tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+    `;
+
+    invoice.orders.forEach(item => {
+        const itemTotal = (item.qty || 1) * (item.price || 0);
+        html += `
+        <tr>
+            <td>${item.name}</td>
+            <td style="text-align:center;">${item.qty}</td>
+            <td style="text-align:center;">đĩa</td>
+            <td style="text-align:right;">${itemTotal.toLocaleString()}đ</td>
+        </tr>`;
+    });
+
+    html += `
+            </tbody>
+        </table>
+        <hr>
+        <div style="text-align:right; font-size:16px;"><strong>Tổng cộng: ${invoice.total.toLocaleString()}đ</strong></div>
+        <hr>
+        <center><p>Cảm ơn Quý khách. Hẹn gặp lại!</p></center>
+        </div>
+    `;
+
+    document.getElementById('invoiceContent').innerHTML = html;
+    document.getElementById('invoiceModal').style.display = 'block';
+    }
+
+
+    // Auto chọn hôm nay khi mở trang
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('dateFilter').value = today;
+      loadRevenue();
+    });
+    //  xuất excel
+    function exportToExcel() {
+    const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+    if (history.length === 0) return alert("Không có dữ liệu!");
+
+    const rows = [["Bàn", "Thời gian", "Món ăn", "Số lượng", "Đơn giá", "Thành tiền"]];
+
+    history.forEach(inv => {
+        const date = new Date(inv.time);
+        inv.orders.forEach(item => {
+        const itemTotal = (item.qty || 0) * (item.price || 0);
+        rows.push([
+            "Bàn " + inv.tableId,
+            date.toLocaleString('vi-VN'),
+            item.name,
+            item.qty,
+            item.price,
+            itemTotal
+        ]);
+        });
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "DoanhThu");
+    XLSX.writeFile(wb, "doanh_thu.xlsx");
+    }
+    function clearAllHistory() {
+    if (!confirm("Bạn có chắc muốn xóa toàn bộ hóa đơn?")) return;
+    localStorage.removeItem('invoiceHistory');
+    loadRevenue();
+    alert("🗑 Đã xóa toàn bộ lịch sử hóa đơn.");
+    }
+    function deleteInvoice(index) {
+    if (!confirm("Xóa hóa đơn này?")) return;
+    const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+    history.splice(index, 1);
+    localStorage.setItem('invoiceHistory', JSON.stringify(history));
+    loadRevenue();
+    }
+  </script>
+</body>
+</html>

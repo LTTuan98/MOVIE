@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý nhà hàng</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <button onclick="location.href='ban.html'">Bàn ăn</button>
+    <button onclick="location.href='dat_mon.html'">Đặt món</button>
+    <button onclick="location.href='thuc_don.html'">Thực đơn</button>
+  </nav>
+  <div id="detailModal" class="modal" style="display:none">
+    <div class="modal-content" id="modalContent"></div>
+   </div>
+  <section id="tables">
+    <h2>Danh sách bàn ăn</h2>
+    <button onclick="location.href='doanh_thu.html'">📈 Doanh thu</button>
+    <button onclick="addTable()">+ Thêm bàn</button>
+    <div id="tableList"></div>
+    
+  </section>
+  <script src="script.js"></script>
+</body>
+</html>

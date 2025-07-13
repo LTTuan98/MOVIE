@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý nhà hàng</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <button onclick="location.href='ban.html'">Bàn ăn</button>
+    <button onclick="location.href='dat_mon.html'">Đặt món</button>
+    <button onclick="location.href='thuc_don.html'">Thực đơn</button>
+  </nav>
+
+  <section id="order">
+    <h2>Đặt món cho <span id="selectedTableLabel">Bàn</span></h2>
+
+    <!-- Các nút lọc món -->
+    <div id="menuTabs">
+      <button onclick="setCurrentMenuFilter('all')">Tất cả</button>
+      <button onclick="setCurrentMenuFilter('chiên xào')">CHIÊN XÀO</button>
+      <button onclick="setCurrentMenuFilter('cơm & mì')">CƠM & MÌ</button>
+      <button onclick="setCurrentMenuFilter('lẩu-hấp')">LẨU-HẤP</button>
+      <button onclick="setCurrentMenuFilter('gỏi')">GỎI</button>
+      <button onclick="setCurrentMenuFilter('khô')">KHÔ</button>
+      <button onclick="setCurrentMenuFilter('nước')">NƯỚC</button>
+    </div>
+
+    <!-- Danh sách món ăn -->
+    <div id="menuForOrdering" class="menu-list"></div>
+
+    <!-- Đơn tạm -->
+    <h3>Đã chọn</h3>
+    <ul id="orderList"></ul>
+  </section>
+
+  <!-- Modal chi tiết -->
+  <div id="detailModal" class="modal" style="display:none">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+
+  <!-- Nạp script.js trước -->
+  <script src="script.js"></script>
+
+  <!-- Gọi sau khi script.js đã load -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (!selectedTableId) {
+        alert("Không xác định được bàn.");
+        location.href = "ban.html";
+      } else {
+        document.getElementById('selectedTableLabel').innerText = `Bàn ${selectedTableId}`;
+        renderMenuForOrdering();
+        renderOrderList(selectedTableId);
+      }
+    });
+  </script>
+</body>
+</html>
