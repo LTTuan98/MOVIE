@@ -211,13 +211,9 @@ function printInvoice(tableId, total) {
     return;
   }
 
-  // 👉 Giờ vào / ra
-  if (!orders[tableId].checkInTime) {
-    orders[tableId].checkInTime = new Date().toISOString();
-  }
-  if (!orders[tableId].checkOutTime) {
-    orders[tableId].checkOutTime = new Date().toISOString(); // lưu lại giờ ra lần đầu
-  }
+  // Lưu thời gian nếu chưa có
+  if (!orders[tableId].checkInTime) orders[tableId].checkInTime = new Date().toISOString();
+  if (!orders[tableId].checkOutTime) orders[tableId].checkOutTime = new Date().toISOString();
 
   const now = new Date();
   const checkInTime = new Date(orders[tableId].checkInTime);
@@ -226,20 +222,16 @@ function printInvoice(tableId, total) {
   const timeOut = checkOutTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   const dateStr = checkOutTime.toLocaleDateString('vi-VN');
 
-  // Mã hóa đơn
-  if (!orders[tableId].invoiceId) {
-    orders[tableId].invoiceId = String(Date.now()).slice(-6);
-  }
+  if (!orders[tableId].invoiceId) orders[tableId].invoiceId = String(Date.now()).slice(-6);
   const invoiceId = orders[tableId].invoiceId;
 
-  // Nội dung hóa đơn
   let content = `
-    <div style="font-family: monospace; padding: 10px; width: 300px; border: 1px solid #000;">
+    <div style="font-family: monospace; padding: 10px; width: 300px;">
       <center>
         <h3 style="margin: 5px 0;">HÂN HÂN QUÁN</h3>
         <div>CS2</div>
-        <div>ĐC:  Ô 51, đường DA7, tổ 9, KDC Việt Sing, kp Hoà Lân2, Phường Thuận Giao, tp Thuận An, TP HCM</div>
-        <div>ĐT: 0377.1760.33</div>
+        <div>ĐC: Ô 51, đường DA7, tổ 9, KDC Việt Sing, P.Thuận Giao, TP.Thuận An</div>
+        <div>ĐT: 0377.176.033</div>
         <hr>
         <h3 style="margin: 5px 0;">HÓA ĐƠN BÁN HÀNG</h3>
         <div>BÀN ${tableId.toString().padStart(2, '0')}</div>
@@ -248,7 +240,7 @@ function printInvoice(tableId, total) {
       <div>Thu ngân: Lý Du &nbsp; In lúc: ${timeOut}</div>
       <div>Giờ vào: ${timeIn} &nbsp;&nbsp;&nbsp; Giờ ra: ${timeOut}</div>
       <hr>
-      <table style="width: 100%; font-size: 13px; border-collapse: collapse;" border="1" cellspacing="0" cellpadding="5">
+      <table style="width: 100%; font-size: 13px;" border="1" cellspacing="0" cellpadding="5">
         <thead style="background-color: #eee;">
           <tr>
             <th style="text-align:left;">Món</th>
@@ -281,13 +273,13 @@ function printInvoice(tableId, total) {
         </tbody>
       </table>
       <hr>
-      <div style="text-align:right; font-size:16px; margin-top:10px;"><strong>Tổng cộng: ${total.toLocaleString()}đ</strong></div>
+      <div style="text-align:right; font-size:16px;"><strong>Tổng cộng: ${total.toLocaleString()}đ</strong></div>
       <hr>
       <center><p>Cảm ơn Quý khách. Hẹn gặp lại!</p></center>
     </div>
   `;
 
-  // ✅ Ghi trạng thái đơn & lưu vào lịch sử
+  // Lưu trạng thái đơn
   tableOrders.forEach(item => {
     item.status = 'Đã in hóa đơn';
     if (!item.unit || !item.unit.trim()) {
@@ -308,6 +300,27 @@ function printInvoice(tableId, total) {
     total
   });
   localStorage.setItem('invoiceHistory', JSON.stringify(history));
+
+  // ✅ In bằng iframe (HỖ TRỢ ĐIỆN THOẠI)
+  const printFrame = document.createElement("iframe");
+  printFrame.style.position = "fixed";
+  printFrame.style.right = "0";
+  printFrame.style.bottom = "0";
+  printFrame.style.width = "0";
+  printFrame.style.height = "0";
+  printFrame.style.border = "0";
+  document.body.appendChild(printFrame);
+
+  printFrame.contentDocument.write(content);
+  printFrame.contentDocument.close();
+
+  printFrame.onload = () => {
+    printFrame.contentWindow.focus();
+    printFrame.contentWindow.print();
+    setTimeout(() => document.body.removeChild(printFrame), 1000);
+  };
+
+
 
   // 🖨 In hóa đơn
   const newWin = window.open('', '', 'width=400,height=600');
