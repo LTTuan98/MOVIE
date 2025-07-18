@@ -33,12 +33,6 @@ section {
   box-sizing: border-box;
 }
 
-#slider {
-  display: flex;
-  transition: transform 0.4s ease;
-  width: 300vw;
-}
-
 /* === Danh sách bàn === */
 #tableList {
   display: grid;
@@ -71,31 +65,44 @@ section {
   cursor: pointer;
 }
 
-/* === Thực đơn === */
+/* === Thực đơn và Đặt món === */
 .menu-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
   margin-top: 1rem;
 }
 
-.menu-item {
-  width: 180px;
+.menu-item.order {
   background: white;
   border: 1px solid #ccc;
   border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 15px;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  min-width: 160px;
+  max-width: 100%;
+  width: 100%;
 }
 
-.menu-item img {
+.menu-item.order input[type="number"],
+.menu-item.order input[type="text"] {
   width: 100%;
-  height: 120px;
-  object-fit: cover;
+  padding: 6px;
+  font-size: 14px;
+  margin: 4px 0;
+  box-sizing: border-box;
+}
+
+.menu-item.order button {
+  margin-top: 6px;
+  background: #e67e22;
+  color: white;
+  border: none;
+  padding: 6px 12px;
   border-radius: 4px;
-  margin-bottom: 0.5rem;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .menu-item button {
@@ -109,7 +116,17 @@ section {
   font-size: 16px;
 }
 
+#menuTabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
 #menuTabs button {
+  flex: 1 0 45%;
+  min-width: 100px;
   margin: 6px 4px;
   padding: 8px 12px;
   border: none;
@@ -123,10 +140,10 @@ section {
 /* === Đơn hàng === */
 input, select, textarea {
   width: 100%;
-  max-width: 100%;      
+  max-width: 100%;
   padding: 10px;
   margin: 8px 0;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .order-item {
@@ -135,8 +152,8 @@ input, select, textarea {
   padding: 10px;
   border-radius: 6px;
   width: 100%;
-  box-sizing: border-box; 
-  overflow-x: auto;       
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .order-item button {
@@ -190,7 +207,7 @@ input, select, textarea {
   cursor: pointer;
 }
 
-/* === Responsive: Màn hình <= 768px === */
+/* === Responsive: Tablet (<= 768px) === */
 @media (max-width: 768px) {
   nav button {
     flex: 1 1 33%;
@@ -208,9 +225,8 @@ input, select, textarea {
   }
 
   #tableList {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* ✅ 2 bàn mỗi hàng */
-    gap: 16px;                             /* ✅ Thêm khoảng cách */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
     padding: 0 8px;
   }
 
@@ -226,21 +242,30 @@ input, select, textarea {
     margin-top: 8px;
   }
 
+  .menu-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .menu-item.order {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .menu-item.order input,
+  .menu-item.order button {
+    font-size: 15px;
+    padding: 8px;
+  }
+
   .menu-item,
   .order-item {
     font-size: 18px;
     padding: 16px;
     width: 100%;
-    max-width: 100%;
   }
 
   .menu-item img {
     height: 160px;
-  }
-
-  #menuTabs button {
-    font-size: 16px;
-    padding: 10px;
   }
 
   .modal-content {
@@ -249,15 +274,34 @@ input, select, textarea {
     font-size: 18px;
   }
 }
-/* === Responsive: Màn hình <= 480px === */
+
+/* === Responsive: Điện thoại nhỏ (<= 480px) === */
 @media (max-width: 480px) {
   nav button {
     font-size: 16px;
     padding: 1rem;
   }
 
-  .menu-item img {
-    height: 140px;
+  .menu-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .menu-item.order {
+    font-size: 15px;
+    padding: 10px;
+    min-width: unset;
+  }
+
+  .menu-item.order input[type="number"],
+  .menu-item.order input[type="text"] {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .menu-item.order button {
+    font-size: 14px;
+    padding: 8px;
   }
 
   .table-item,
@@ -280,4 +324,58 @@ input, select, textarea {
   .modal-content {
     padding: 18px;
   }
+
+  #orderList {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .add-menu-form {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .add-menu-form input,
+  .add-menu-form select,
+  .add-menu-form button {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* === Form thêm món === */
+.add-menu-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin-top: 1rem;
+}
+
+.add-menu-form input,
+.add-menu-form select,
+.add-menu-form button {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-menu-form label {
+  font-size: 16px;
+}
+
+/* ✅ Thêm container bọc nội dung */
+.container {
+  padding: 0 12px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#orderList h3 {
+  margin-top: 0;
+  font-size: 18px;
 }

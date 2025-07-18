@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Quản lý nhà hàng</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <nav>
@@ -13,25 +14,30 @@
   </nav>
 
   <section id="order">
-    <h2>Đặt món cho <span id="selectedTableLabel">Bàn</span></h2>
+    <div class="container">
+      <h2>Đặt món cho <span id="selectedTableLabel">Bàn</span></h2>
+  
+      <!-- Các nút lọc món -->
+      <div id="menuTabs">
+        <button onclick="setCurrentMenuFilter('all')">Tất cả</button>
+        <button onclick="setCurrentMenuFilter('chiên xào')">CHIÊN XÀO</button>
+        <button onclick="setCurrentMenuFilter('cơm & mì')">CƠM & MÌ</button>
+        <button onclick="setCurrentMenuFilter('lẩu-hấp')">LẨU-HẤP</button>
+        <button onclick="setCurrentMenuFilter('gỏi')">GỎI</button>
+        <button onclick="setCurrentMenuFilter('khô')">KHÔ</button>
+        <button onclick="setCurrentMenuFilter('nước')">NƯỚC</button>
+      </div>
+  
+      <!-- Danh sách món ăn -->
+      <div id="menuForOrdering" class="menu-list"></div>
 
-    <!-- Các nút lọc món -->
-    <div id="menuTabs">
-      <button onclick="setCurrentMenuFilter('all')">Tất cả</button>
-      <button onclick="setCurrentMenuFilter('chiên xào')">CHIÊN XÀO</button>
-      <button onclick="setCurrentMenuFilter('cơm & mì')">CƠM & MÌ</button>
-      <button onclick="setCurrentMenuFilter('lẩu-hấp')">LẨU-HẤP</button>
-      <button onclick="setCurrentMenuFilter('gỏi')">GỎI</button>
-      <button onclick="setCurrentMenuFilter('khô')">KHÔ</button>
-      <button onclick="setCurrentMenuFilter('nước')">NƯỚC</button>
+      <!-- Đơn tạm -->
+      <div id="orderContainer">
+        <h3>Đã chọn</h3>
+        <ul id="orderList"></ul>
+      </div>
+
     </div>
-
-    <!-- Danh sách món ăn -->
-    <div id="menuForOrdering" class="menu-list"></div>
-
-    <!-- Đơn tạm -->
-    <h3>Đã chọn</h3>
-    <ul id="orderList"></ul>
   </section>
 
   <!-- Modal chi tiết -->

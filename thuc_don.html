@@ -14,6 +14,23 @@
   <section id="menu">
     <h2>Quản lý thực đơn</h2>
     <input type="text" id="searchFood" placeholder="Tìm món..." oninput="renderMenu()">
+     <h3>Thêm món</h3>
+      <div class="add-menu-form">
+        <input type="text" id="newFoodName" placeholder="Tên món">
+        <input type="number" id="newFoodPrice" placeholder="Giá">
+        <input type="text" id="newFoodUnit" placeholder="Đơn vị tính (vd: đĩa, ly...)">
+        <label><input type="checkbox" id="manualPriceCheckbox"> Nhập giá khi đặt</label>
+        <select id="newFoodType">
+          <option value="chiên xào">CHIÊN XÀO</option>
+          <option value="cơm & mì">CƠM & MÌ</option>
+          <option value="lẩu-hấp">LẨU-HẤP</option>
+          <option value="gỏi">GỎI</option>
+          <option value="khô">KHÔ</option>
+          <option value="nước">NƯỚC</option>
+        </select>
+        <input type="file" id="newFoodFile" accept="image/*">
+        <button onclick="addMenuItem()">Thêm món</button>
+      </div>
     <div id="menuTabs">
       <button onclick="filterMenu('all')">Tất cả</button>
       <button onclick="filterMenu('chiên xào')">CHIÊN XÀO</button>
@@ -24,21 +41,7 @@
       <button onclick="filterMenu('nước')">NƯỚC</button>
     </div>
     <div id="menuList" class="menu-list"></div>
-    <h3>Thêm món</h3>
-    <input type="text" id="newFoodName" placeholder="Tên món">
-    <input type="number" id="newFoodPrice" placeholder="Giá">
-    <input type="text" id="newFoodUnit" placeholder="Đơn vị tính (vd: đĩa, ly...)">
-    <label><input type="checkbox" id="manualPriceCheckbox"> Nhập giá khi đặt</label>
-    <select id="newFoodType">
-      <option value="chiên xào">CHIÊN XÀO</option>
-      <option value="cơm & mì">CƠM & MÌ</option>
-      <option value="lẩu-hấp">LẨU-HẤP</option>
-      <option value="gỏi">GỎI</option>
-      <option value="khô">KHÔ</option>
-      <option value="nước">NƯỚC</option>
-    </select>
-    <input type="file" id="newFoodFile" accept="image/*">
-    <button onclick="addMenuItem()">Thêm món</button>
+   
 
   </section>
   <script src="script.js"></script>

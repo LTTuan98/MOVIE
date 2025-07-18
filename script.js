@@ -635,3 +635,42 @@ function calcTotalFromOrder(orderList) {
   });
   return total;
 }
+
+function openInvoiceTab() {
+  const order = getOrderByTableId(selectedTableId);
+  if (!order || order.length === 0) {
+    alert("Không có món nào để in.");
+    return;
+  }
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Hóa đơn</title>
+        <style>
+          body { font-family: Arial; padding: 20px; }
+          h2 { text-align: center; }
+          ul { padding-left: 20px; }
+          li { margin-bottom: 6px; }
+        </style>
+      </head>
+      <body>
+        <h2>HÓA ĐƠN NHÀ HÀNG</h2>
+        <p><strong>Bàn số:</strong> ${selectedTableId}</p>
+        <ul>
+          ${order.map(item => `<li>${item.name} x ${item.quantity}</li>`).join('')}
+        </ul>
+        <script>
+          setTimeout(() => window.print(), 500);
+        </script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+function getOrderByTableId(tableId) {
+  const orders = JSON.parse(localStorage.getItem('orders')) || [];
+  return orders.find(o => o.tableId === tableId)?.items || [];
+}
